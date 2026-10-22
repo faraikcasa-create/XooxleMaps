@@ -1,1 +1,57 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>XooxleMaps</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}body{background:#f8f9fa;height:100vh;display:flex;flex-direction:column}header{background:#fff;padding:12px 16px;box-shadow:0 2px 10px rgba(0,0,0,.1);z-index:1000}.top{display:flex;gap:10px;align-items:center}.logo{font-weight:900;font-size:22px;color:#1a73e8}.logo span{color:#ea4335}.search-box{flex:1;display:flex;background:#f1f3f4;border-radius:24px;padding:8px 16px;align-items:center;gap:8px}.search-box input{flex:1;border:none;background:transparent;outline:none;font-size:16px}.btn{border:none;background:#1a73e8;color:#fff;padding:8px 18px;border-radius:20px;font-weight:600;cursor:pointer}.cats{display:flex;gap:8px;margin-top:12px;overflow-x:auto}.cat{white-space:nowrap;background:#fff;border:1px solid #dadce0;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer}.cat.active{background:#e8f0fe;color:#1a73e8}#map{flex:1}#results{position:absolute;bottom:0;left:0;right:0;background:#fff;max-height:45%;overflow:auto;z-index:500;border-radius:16px 16px 0 0;display:none}.res-header{padding:12px 16px;font-weight:700;border-bottom:1px solid #eee;display:flex;justify-content:space-between}.item{padding:12px 16px;border-bottom:1px solid #f1f3f4;display:flex;gap:12px;cursor:pointer}.item:hover{background:#f8f9fa}.icon{width:40px;height:40px;background:#e8f0fe;border-radius:50%;display:flex;align-items:center;justify-content:center}</style></head><body><header><div class="top"><div class="logo">XooxleMaps</div><div class="search-box">🔍<input id="q" placeholder="قهوة، مطعم، صيدلية..." onkeydown="if(event.key==='Enter')search()"><button class="btn" onclick="search()">بحث</button></div></div><div class="cats"><div class="cat active" onclick="quick('')">الكل</div><div class="cat" onclick="quick('cafe')">☕ قهوة</div><div class="cat" onclick="quick('restaurant')">🍽️ مطعم</div><div class="cat" onclick="quick('pharmacy')">💊 صيدلية</div><div class="cat" onclick="quick('mosque')">🕌 مسجد</div><div class="cat" onclick="quick('supermarket')">🛒 مارشي</div></div></header><div id="map"></div><div id="results"><div class="res-header"><span id="count">النتائج</span><span onclick="closeRes()" style="cursor:pointer">✕</span></div><div id="list"></div></div><script>let map=L.map('map').setView([34.6814,-1.9086],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);let markers=L.layerGroup().addTo(map);let userPos=null;function locate(){if(navigator.geolocation){navigator.geolocation.getCurrentPosition(p=>{userPos=[p.coords.latitude,p.coords.longitude];map.setView(userPos,15);L.marker(userPos).addTo(map).bindPopup('📍 انت هنا');});}}locate();function quick(t){document.getElementById('q').value=t;search(t);}async function search(ft){let q=(ft||document.getElementById('q').value).trim();if(!q)return;let center=userPos||[map.getCenter().lat,map.getCenter().lng];markers.clearLayers();document.getElementById('results').style.display='block';document.getElementById('list').innerHTML='<div style="padding:20px;text-align:center">⏳ كنقلب...</div>';try{let over=`[out:json][timeout:25];(nwr["name"](around:5000,${center[0]},${center[1]})[~"^(name|shop|amenity)$"~"${q}",i];nwr(around:5000,${center[0]},${center[1]})["amenity"~"${q}",i];nwr(around:5000,${center[0]},${center[1]})["shop"~"${q}",i];);out center 30;`;let res=await fetch('https://overpass-api.de/api/interpreter?data='+encodeURIComponent(over));let data=await res.json();if(!data.elements||data.elements.length==0){let nom=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=10&countrycodes=ma`);let j=await nom.json();showNom(j);return;}showOver(data.elements);}catch(e){let nom=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}+Morocco&limit=15`);let j=await nom.json();showNom(j);}}function showOver(els){let list=document.getElementById('list');list.innerHTML='';document.getElementById('count').textContent=els.length+' نتيجة';els.forEach(el=>{let lat=el.lat||el.center?.lat;let lon=el.lon||el.center?.lon;if(!lat)return;let name=el.tags?.name||el.tags?.amenity||'مكان';let m=L.marker([lat,lon]).addTo(markers).bindPopup(`<b>${name}</b><br><a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank">🧭 الاتجاهات</a>`);let div=document.createElement('div');div.className='item';div.innerHTML=`<div class="icon">📍</div><div><h4>${name}</h4><p>${el.tags?.amenity||''}</p></div>`;div.onclick=()=>{map.setView([lat,lon],17);m.openPopup();};list.appendChild(div);});}function showNom(arr){let list=document.getElementById('list');list.innerHTML='';document.getElementById('count').textContent=arr.length+' نتيجة';arr.forEach(p=>{let lat=parseFloat(p.lat),lon=parseFloat(p.lon);let m=L.marker([lat,lon]).addTo(markers).bindPopup(`<b>${p.display_name.split(',')[0]}</b>`);let div=document.createElement('div');div.className='item';div.innerHTML=`<div class="icon">📌</div><div><h4>${p.display_name.split(',')[0]}</h4><p>${p.display_name.substring(0,60)}</p></div>`;div.onclick=()=>{map.setView([lat,lon],16);m.openPopup();};list.appendChild(div);});if(arr[0])map.setView([arr[0].lat,arr[0].lon],13);}function closeRes(){document.getElementById('results').style.display='none'}</script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XooxleMaps - Oujda</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{height:100vh;display:flex;flex-direction:column}
+header{background:#1a73e8;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:20px;font-weight:800}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;padding:11px 45px 11px 16px;border-radius:24px;border:none;outline:none;font-size:15px}
+.search-box button{position:absolute;right:4px;top:4px;bottom:4px;width:36px;border-radius:50%;border:none;background:#1a73e8;color:#fff;cursor:pointer}
+#map{flex:1}
+.controls{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:8px;background:#fff;padding:8px 12px;border-radius:28px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.controls button{padding:8px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;font-weight:600}
+.controls button.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+</style>
+</head>
+<body>
+<header>
+<h1>XooxleMaps</h1>
+<div class="search-box">
+<input id="q" placeholder="Chercher a Oujda... gare, fac..." onkeydown="if(event.key==='Enter')search()">
+<button onclick="search()">🔍</button>
+</div>
+</header>
+<div id="map"></div>
+<div class="controls">
+<button class="active" onclick="setStyle('streets',this)">Plan</button>
+<button onclick="setStyle('sat',this)">Satellite</button>
+<button onclick="locate()">📍 Moi</button>
+</div>
+<script>
+const map=L.map('map').setView([34.6814,-1.9086],13);
+let base=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+L.marker([34.6814,-1.9086]).addTo(map).bindPopup('<b>Oujda</b><br>XooxleMaps').openPopup();
+function setStyle(t,btn){
+document.querySelectorAll('.controls button').forEach(b=>{if(b.textContent!='📍 Moi')b.classList.remove('active')});
+if(btn)btn.classList.add('active');
+map.removeLayer(base);
+if(t==='sat')base=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19}).addTo(map);
+else base=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+}
+async function search(){
+const q=document.getElementById('q').value;if(!q)return;
+const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q+' Oujda')}&limit=5`);
+const d=await r.json();
+if(d[0]){map.setView([d[0].lat,d[0].lon],16);L.marker([d[0].lat,d[0].lon]).addTo(map).bindPopup(d[0].display_name).openPopup();}
+}
+function locate(){map.locate({setView:true,maxZoom:16});map.on('locationfound',e=>{L.marker(e.latlng).addTo(map).bindPopup('Vous etes ici').openPopup();});}
+</script>
+</body>
+</html>
