@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>XooxleSpace - Farai Casa</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:sans-serif;overflow:hidden}
+#stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 2s infinite}
+@keyframes twinkle{0%,100%{opacity:0.3}50%{opacity:1}}
+.header{position:fixed;top:0;left:0;width:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;z-index:10;border-bottom:1px solid #333}
+.logo{font-size:22px;font-weight:bold;color:#4285f4}
+.logo span{color:#fff}
+.nav a{color:#aaa;text-decoration:none;margin-left:15px;font-size:14px}
+.nav a:hover{color:#fff}
+.space{position:relative;z-index:1;margin-top:70px;height:calc(100vh - 70px);display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:48px;background:linear-gradient(90deg,#4285f4,#ea4335,#fbbc05,#34a853);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+.subtitle{color:#888;margin-bottom:40px}
+.solar{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;padding:20px}
+.planet{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:0.3s;border:2px solid transparent;position:relative}
+.planet:hover{transform:scale(1.2);border-color:#fff;box-shadow:0 0 20px currentColor}
+.planet .emoji{font-size:50px}
+.planet .name{position:absolute;bottom:-25px;font-size:12px;color:#ccc}
+.sun{background:radial-gradient(circle,#ffeb3b,#ff9800);box-shadow:0 0 40px #ff9800;color:#ff9800}
+.mercury{background:radial-gradient(circle,#9e9e9e,#616161)}
+.venus{background:radial-gradient(circle,#ffcc80,#ff8f00)}
+.earth{background:radial-gradient(circle,#64b5f6,#1e88e5);box-shadow:0 0 20px #1e88e5}
+.mars{background:radial-gradient(circle,#ef9a9a,#c62828);box-shadow:0 0 15px #c62828}
+.jupiter{background:radial-gradient(circle,#ffcc80,#6d4c41);width:130px;height:130px}
+.saturn{background:radial-gradient(circle,#ffe0b2,#8d6e63)}
+.uranus{background:radial-gradient(circle,#80deea,#0097a7)}
+.neptune{background:radial-gradient(circle,#90caf9,#0d47a1)}
+.controls{margin-top:50px;display:flex;gap:10px}
+.btn{padding:12px 24px;background:#222;border:1px solid #444;color:#fff;border-radius:20px;cursor:pointer}
+.btn:hover{background:#4285f4;border-color:#4285f4}
+.info{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(20,20,20,0.9);padding:15px 25px;border-radius:12px;border:1px solid #333;text-align:center;z-index:10}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div class="header">
+<div class="logo">Xooxle<span>Space</span></div>
+<div class="nav"><a href="../">XooxleMaps</a><a href="../XooxleEarth/">Earth</a><a href="../XooxleSpace/">Space</a></div>
+</div>
+<div class="space">
+<h1>XooxleSpace</h1>
+<p class="subtitle">استكشف الكون - by Farai Casa 0612040421</p>
+<div class="solar">
+<div class="planet sun" onclick="goPlanet('الشمس - مركز النظام الشمسي - 15 مليون درجة!')"><div class="emoji">☀️</div><div class="name">Sun</div></div>
+<div class="planet mercury" onclick="goPlanet('عطارد - أصغر كوكب - قريب للشمس')"><div class="emoji">🌑</div><div class="name">Mercury</div></div>
+<div class="planet venus" onclick="goPlanet('الزهرة - أسخن كوكب - 462 درجة!')"><div class="emoji">🌕</div><div class="name">Venus</div></div>
+<div class="planet earth" onclick="goPlanet('🌍 الأرض - دارنا! فيها Casa و Marrakech!')"><div class="emoji">🌍</div><div class="name">Earth</div></div>
+<div class="planet mars" onclick="goPlanet('المريخ - الكوكب الأحمر - فيه جبل أعلى من Everest')"><div class="emoji">🔴</div><div class="name">Mars</div></div>
+<div class="planet jupiter" onclick="goPlanet('المشتري - أكبر كوكب - يقدر يهز 1300 أرض!')"><div class="emoji">🪐</div><div class="name">Jupiter</div></div>
+<div class="planet saturn" onclick="goPlanet('زحل - عندو خواتم من الثلج والصخور')"><div class="emoji">💍</div><div class="name">Saturn</div></div>
+<div class="planet uranus" onclick="goPlanet('أورانوس - كيدور بالعكس!')"><div class="emoji">🔵</div><div class="name">Uranus</div></div>
+<div class="planet neptune" onclick="goPlanet('نبتون - أبعد كوكب - رياح 2000 كم/ساعة!')"><div class="emoji">🌊</div><div class="name">Neptune</div></div>
+</div>
+<div class="controls">
+<button class="btn" onclick="launch()">🚀 انطلق للفضاء</button>
+<button class="btn" onclick="location.href='../'">🗺️ رجع للأرض</button>
+</div>
+</div>
+<div class="info" id="info">كليكي على أي كوكب باش تستكشفو ✨</div>
+<script>
+const starsDiv=document.getElementById('stars');
+for(let i=0;i<200;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.width=s.style.height=Math.random()*3+'px';s.style.animationDelay=Math.random()*2+'s';starsDiv.appendChild(s);}
+function goPlanet(t){document.getElementById('info').innerHTML='🚀 '+t}
+function launch(){let c=3;const inf=document.getElementById('info');const iv=setInterval(()=>{inf.innerHTML='🚀 الانطلاق بعد '+c+'...';c--;if(c<0){clearInterval(iv);inf.innerHTML='✨ أنت الآن في الفضاء! XooxleSpace by Farai Casa';document.body.style.background='radial-gradient(ellipse at center,#0a0a2a 0%,#000 100%)'}} ,700)}
+</script>
+</body>
+</html>
