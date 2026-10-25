@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XooxleMaps</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+.header{background:#fff;padding:10px;display:flex;justify-content:space-between;box-shadow:0 2px 5px rgba(0,0,0,.2);position:relative;z-index:999}
+.logo{font-weight:bold;font-size:22px;color:#4285f4}
+.menu a{margin:0 3px;text-decoration:none;color:#fff;background:#4285f4;padding:6px 10px;border-radius:20px;font-size:12px}
+#map{height:100vh;width:100%}
+.search{position:absolute;top:70px;right:10px;left:10px;z-index:999;max-width:400px;margin:auto}
+.search input{width:100%;padding:12px;border-radius:25px;border:none;box-shadow:0 2px 8px rgba(0,0,0,.4);outline:none}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="logo">XooxleMaps</div>
+<div class="menu">
+<a href="https://casa-create.github.io/XooxleInternet/">🌐 بوابة</a>
+<a href="https://casa-create.github.io/XooxleSearch/">🔍 بحث</a>
+</div>
+</div>
+<div class="search"><input id="s" placeholder="قلب: مراكش، مكناس، كازا..."></div>
+<div id="map"></div>
+<script>
+var map=L.map('map').setView([31.63,-7.98],6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.marker([31.63,-7.98]).addTo(map).bindPopup("<b>مراكش</b><br><a href='https://casa-create.github.io/XooxleInternet/'>XooxleInternet</a>");
+L.marker([33.58,-5.53]).addTo(map).bindPopup("<b>مكناس - 050510</b>");
+var cities={"مراكش":[31.63,-7.98],"مكناس":[33.58,-5.53],"كازا":[33.57,-7.58],"marrakech":[31.63,-7.98],"meknes":[33.58,-5.53]};
+document.getElementById('s').addEventListener('keyup',function(e){
+if(e.key==='Enter'){var q=this.value.toLowerCase();if(cities[q]){map.setView(cities[q],13);L.marker(cities[q]).addTo(map).bindPopup(q).openPopup();}}
+});
+</script>
+</body>
+</html>
