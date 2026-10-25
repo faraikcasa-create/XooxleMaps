@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XooxleMaps - خرائط المغرب</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial;overflow:hidden}
+#header{position:absolute;top:0;right:0;left:0;z-index:1000;background:#fff;padding:10px;display:flex;gap:8px;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+#header input{flex:1;padding:12px 15px;border-radius:25px;border:1px solid #ccc;outline:none}
+#header button{padding:12px 18px;background:#4285f4;color:#fff;border:none;border-radius:20px}
+#map{height:100vh;width:100vw;margin-top:60px}
+.logo{color:#4285f4;font-weight:bold;font-size:18px;padding:8px}
+</style>
+</head>
+<body>
+<div id="header">
+<div class="logo">XooxleMaps</div>
+<input id="q" placeholder="قلب على بلاصة... مراكش، كازا، فاس...">
+<button onclick="search()">بحث</button>
+</div>
+<div id="map"></div>
+<script>
+var map = L.map('map').setView([31.6296, -7.9811], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+
+var cities = {
+"مراكش":[31.6296,-7.9811],
+"كازا":[33.5731,-7.5898],
+"الدار البيضاء":[33.5731,-7.5898],
+"فاس":[34.0181,-5.0078],
+"طنجة":[35.7595,-5.8340],
+"رباط":[34.0209,-6.8416],
+"أكادير":[30.4278,-9.5981],
+"مكناس":[33.8935,-5.5473],
+"وجدة":[34.6818,-1.9086]
+};
+
+function search(){
+var v=document.getElementById('q').value.trim();
+if(cities[v]){map.setView(cities[v],13);L.marker(cities[v]).addTo(map).bindPopup(v).openPopup();}
+else if(v){fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(v+' Morocco')).then(r=>r.json()).then(d=>{if(d[0]){var lat=d[0].lat,lon=d[0].lon;map.setView([lat,lon],13);L.marker([lat,lon]).addTo(map).bindPopup(d[0].display_name).openPopup();}else alert('ما لقيناش هاد البلاصة');});}
+}
+L.marker([31.6296,-7.9811]).addTo(map).bindPopup('مراكش - XooxleMaps');
+document.getElementById('q').addEventListener('keypress',function(e){if(e.key==='Enter')search();});
+</script>
+</body>
+</html>
