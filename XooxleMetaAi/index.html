@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>搜索吧，英雄！</title>
+<style>
+body{margin:0;font-family:Arial;background:#e8f5e9;text-align:center;padding-top:50px}
+h1{color:#1a73e8;font-size:34px}
+.box{background:white;border:3px solid #1a73e8;border-radius:30px;padding:10px;display:flex;max-width:600px;margin:30px auto}
+input{flex:1;border:0;font-size:18px;padding:10px;outline:none}
+.btn{border:0;border-radius:20px;padding:12px 16px;font-weight:bold}
+.voice{background:#f1f3f4}
+.search{background:#1a73e8;color:white}
+</style>
+</head>
+<body>
+<h1>搜索吧，英雄！</h1>
+<p>ابحث يا بطل</p>
+<div class="box">
+<button class="btn voice" onclick="startVoice()">🎤 语音</button>
+<input id="q" placeholder="说：故事">
+<button class="btn search" onclick="doSearch()">搜索</button>
+</div>
+<script>
+function startVoice(){
+ var r=new webkitSpeechRecognition();r.lang='zh-CN';
+ r.onresult=function(e){document.getElementById('q').value=e.results[0][0].transcript;doSearch()};
+ r.start();
+}
+function doSearch(){
+ var v=document.getElementById('q').value;
+ if(v) window.open('https://www.google.com/search?q='+encodeURIComponent(v),'_blank');
+}
+</script>
+</body>
+</html>
