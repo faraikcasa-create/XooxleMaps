@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+<meta charset="UTF-8"><!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Xooxle - 英雄搜索</title>
+<style>
+body{text-align:center;font-family:Tahoma;background:#e8f5e9}
+.搜索框{background:white;border:3px solid blue;border-radius:30px;padding:12px;display:flex;max-width:600px;margin:20px auto}
+</style>
+</head>
+<body>
+<h1>搜索吧，英雄！(ابحث يا بطل)</h1>
+
+<div class="搜索框">
+<button onclick="语音()">🎤 语音</button>
+<input id="问题" placeholder="说：故事 (قل: قصة)">
+<button onclick="搜索()">搜索</button>
+</div>
+
+<div id="结果"></div>
+
+<script>
+// 语音识别功能
+function 语音(){
+  let 识别 = new webkitSpeechRecognition();
+  识别.lang='zh-CN';
+  识别.onresult = e => {
+    document.getElementById('问题').value = e.results[0][0].transcript;
+    搜索();
+  };
+  识别.start();
+}
+
+// 搜索功能
+function 搜索(){
+  let 输入 = document.getElementById('问题').value;
+  let 结果区 = document.getElementById('结果');
+  结果区.style.display='block';
+  
+  if(输入.includes('故事')){
+    结果区.innerHTML='英雄约瑟夫的故事 - 他爱真主，真主拯救了他 - 你也是英雄！<br>قصة يوسف البطل';
+  } else if(输入.includes('祈祷')){
+    结果区.innerHTML='祈祷：真主至大 - 法蒂哈 - 鞠躬 - 叩头 - 做得好！';
+  } else {
+    结果区.innerHTML=输入+' - 你是英雄！我能行！';
+  }
+}
+</script>
+</body>
+</html>
+<title>Xooxle - 英雄搜索</title>
+<style>
+body{text-align:center;font-family:Tahoma;background:#e8f5e9}
+.搜索框{background:white;border:3px solid blue;border-radius:30px;padding:12px;display:flex;max-width:600px;margin:20px auto}
+</style>
+</head>
+<body>
+<h1>搜索吧，英雄！(ابحث يا بطل)</h1>
+
+<div class="搜索框">
+<button onclick="语音()">🎤 语音</button>
+<input id="问题" placeholder="说：故事 (قل: قصة)">
+<button onclick="搜索()">搜索</button>
+</div>
+
+<div id="结果"></div>
+
+<script>
+// 语音识别功能
+function 语音(){
+  let 识别 = new webkitSpeechRecognition();
+  识别.lang='zh-CN';
+  识别.onresult = e => {
+    document.getElementById('问题').value = e.results[0][0].transcript;
+    搜索();
+  };
+  识别.start();
+}
+
+// 搜索功能
+function 搜索(){
+  let 输入 = document.getElementById('问题').value;
+  let 结果区 = document.getElementById('结果');
+  结果区.style.display='block';
+  
+  if(输入.includes('故事')){
+    结果区.innerHTML='英雄约瑟夫的故事 - 他爱真主，真主拯救了他 - 你也是英雄！<br>قصة يوسف البطل';
+  } else if(输入.includes('祈祷')){
+    结果区.innerHTML='祈祷：真主至大 - 法蒂哈 - 鞠躬 - 叩头 - 做得好！';
+  } else {
+    结果区.innerHTML=输入+' - 你是英雄！我能行！';
+  }
+}
+</script>
+</body>
+</html>
