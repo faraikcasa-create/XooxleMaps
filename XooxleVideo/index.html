@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xooxle Vidéo</title>
+<style>
+body{margin:0;font-family:Arial;background:white;text-align:center}
+.logo{font-size:80px;margin-top:80px;font-weight:bold}
+.logo b:nth-child(1){color:#4285F4}
+.logo b:nth-child(2){color:#EA4335}
+.logo b:nth-child(3){color:#FBBC05}
+.logo b:nth-child(4){color:#4285F4}
+.logo b:nth-child(5){color:#34A853}
+.logo b:nth-child(6){color:#EA4335}
+#q{width:90%;max-width:550px;border:1px solid #ddd;border-radius:24px;padding:14px 22px;font-size:18px;margin-top:30px;outline:none}
+#q:focus{box-shadow:0 1px 6px rgba(32,33,36,.28);border-color:transparent}
+button{margin-top:20px;padding:12px 20px;background:#f8f9fa;border:1px solid #f8f9fa;border-radius:4px;font-size:14px;cursor:pointer}
+button:hover{border-color:#dadce0;box-shadow:0 1px 1px rgba(0,0,0,.1)}
+</style>
+</head>
+<body>
+<div class="logo"><b>X</b><b>o</b><b>o</b><b>x</b><b>l</b><b>e</b></div>
+<input id="q" type="text" placeholder="Rechercher une vidéo" autofocus>
+<br>
+<button onclick="go()">Vidéos de recherche</button>
+<script>
+function go(){
+let v=document.getElementById('q').value;
+if(v) location.href='https://www.google.com/search?q='+encodeURIComponent(v)+'&tbm=vid';
+}
+document.getElementById('q').addEventListener('keypress',function(e){if(e.key==='Enter') go();});
+</script>
+</body>
+</html>
