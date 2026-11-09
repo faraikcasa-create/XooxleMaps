@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XooxleMaps - بحث جديد</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f8f9fa}
+.header{background:white;padding:12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.1);position:relative;z-index:1000}
+.logo{font-size:26px;font-weight:bold}
+.logo span{color:#4285F4}.logo b{color:#EA4335}.logo i{color:#FBBC05;font-style:normal}.logo em{color:#34A853;font-style:normal}
+.search-box{margin:12px auto;max-width:600px;display:flex;gap:8px;padding:0 10px}
+.search-box input{flex:1;padding:13px 16px;border:2px solid #ddd;border-radius:25px;outline:none;font-size:16px}
+.search-box input:focus{border-color:#4285F4}
+.search-box button{padding:13px 20px;background:#4285F4;color:white;border:none;border-radius:25px;font-weight:bold}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 10px 10px}
+.chips button{padding:7px 14px;border:1px solid #ddd;background:white;border-radius:20px}
+#map{height:calc(100vh - 175px);width:100%}
+.result{position:absolute;bottom:20px;left:10px;right:10px;background:white;padding:12px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.2);display:none;z-index:1000}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="logo"><span>X</span><b>o</b><i>o</i><em>x</em><span>l</span><b>e</b> Maps</div>
+<div class="search-box">
+<input id="q" placeholder="قلب على بلاصة... مثلا: فاس، الدار البيضاء..." onkeypress="if(event.keyCode==13) searchPlace()">
+<button onclick="searchPlace()">بحث</button>
+</div>
+<div class="chips">
+<button onclick="quick('فاس')">فاس</button>
+<button onclick="quick('الدار البيضاء')">الدار البيضاء</button>
+<button onclick="quick('الرباط')">الرباط</button>
+<button onclick="quick('مراكش')">مراكش</button>
+<button onclick="quick('طنجة')">طنجة</button>
+</div>
+</div>
+<div id="map"></div>
+<div id="result" class="result"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map = L.map('map').setView([33.5731, -7.5898], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+var marker;
+function quick(t){document.getElementById('q').value=t; searchPlace();}
+async function searchPlace(){
+var q=document.getElementById('q').value;
+if(!q) return alert('كتب شي بلاصة بعدا');
+var res=await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(q)+'&limit=1&accept-language=ar');
+var data=await res.json();
+if(data.length==0) return alert('مالقيناش هاد البلاصة');
+var p=data[0];
+map.setView([p.lat,p.lon],15);
+if(marker) map.removeLayer(marker);
+marker=L.marker([p.lat,p.lon]).addTo(map).bindPopup('<b>'+p.display_name+'</b>').openPopup();
+var r=document.getElementById('result');
+r.style.display='block';
+r.innerHTML='<b>'+p.display_name+'</b><br><br><a href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lon+'" target="_blank" style="color:#4285F4;font-weight:bold">الاتجاهات</a> &nbsp; | &nbsp; <span onclick="document.getElementById(\'result\').style.display=\'none\'" style="color:red">إغلاق X</span>';
+}
+</script>
+</body>
+</html>
